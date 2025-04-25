@@ -1,0 +1,52 @@
+public class GeoUtils {
+
+    // Produit vectoriel de AB et AC
+    public static double produitVectoriel(Point a, Point b, Point c) {
+        double abX = b.getX() - a.getX();
+        double abY = b.getY() - a.getY();
+        double acX = c.getX() - a.getX();
+        double acY = c.getY() - a.getY();
+        return abX * acY - abY * acX;
+    }
+
+    // Vérifie si le point c est sur le segment ab
+    public static boolean estSurSegment(Point a, Point b, Point c) {
+        double prodVec = produitVectoriel(a, b, c);
+        if (prodVec != 0) return false;
+
+        double minX = Math.min(a.getX(), b.getX());
+        double maxX = Math.max(a.getX(), b.getX());
+        double minY = Math.min(a.getY(), b.getY());
+        double maxY = Math.max(a.getY(), b.getY());
+
+        return (c.getX() >= minX && c.getX() <= maxX &&
+                c.getY() >= minY && c.getY() <= maxY);
+    }
+
+    // Vérifie si les segments AB et CD s'intersectent
+    public static boolean segmentsIntersectent(Segment s1, Segment s2) {
+        Point a = s1.getP1();
+        Point b = s1.getP2();
+        Point c = s2.getP1();
+        Point d = s2.getP2();
+
+        double d1 = produitVectoriel(a, b, c);
+        double d2 = produitVectoriel(a, b, d);
+        double d3 = produitVectoriel(c, d, a);
+        double d4 = produitVectoriel(c, d, b);
+
+        // Cas général
+        if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
+            ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) {
+            return true;
+        }
+
+        // Cas spéciaux : un point est sur l'autre segment
+        if (d1 == 0 && estSurSegment(a, b, c)) return true;
+        if (d2 == 0 && estSurSegment(a, b, d)) return true;
+        if (d3 == 0 && estSurSegment(c, d, a)) return true;
+        if (d4 == 0 && estSurSegment(c, d, b)) return true;
+
+        return false;
+    }
+}
